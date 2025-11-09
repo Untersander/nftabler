@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	configDir  = "/etc/nft-config"
+	configDir  = "/etc/nftabler"
 	nftBinPath = "/usr/sbin/nft"
 )
 
