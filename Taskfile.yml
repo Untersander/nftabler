@@ -1,0 +1,40 @@
+# https://taskfile.dev
+
+version: "3"
+
+env:
+  # Target registry (set REGISTRY env var to override)
+  REGISTRY_REPO: '{{.REGISTRY_REPO | default "ttl.sh"}}'
+  REGISTRY_USER:
+    sh: "uuidgen | tr '[:upper:]' '[:lower:]'"
+  REGISTRY: '{{printf "%s/%s/nftabler" .REGISTRY_REPO .REGISTRY_USER}}'
+
+tasks:
+  setup-buildx:
+    desc: "Create and bootstrap a docker-container buildx builder (idempotent)"
+    cmds:
+      - docker buildx create --name local --driver docker-container --use || docker buildx use local
+      - docker buildx inspect --bootstrap
+
+  build-binaries:
+    desc: "Build Go binaries with goreleaser (snapshot, build only)"
+    deps: [setup-buildx]
+    cmds:
+      - |
+        goreleaser build --snapshot --clean
+
+  build-docker:
+    desc: "Build Docker images with goreleaser (snapshot, build only)"
+    deps: [setup-buildx]
+    cmds:
+      - |
+        goreleaser build --snapshot --clean
+
+  build-and-push:
+    desc: "Run goreleaser release (snapshot) and push images to REGISTRY. Ensure login first."
+    deps: [setup-buildx, build-binaries]
+    cmds:
+      - |
+        goreleaser release --snapshot --clean
+        docker push $REGISTRY:latest-amd64
+        docker push $REGISTRY:latest-arm64

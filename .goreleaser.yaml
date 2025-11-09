@@ -6,6 +6,8 @@ before:
   hooks:
     - go mod tidy
 
+env:
+  - REGISTRY={{ if index .Env "REGISTRY" }}{{ .Env.REGISTRY }}{{ else }}ghcr.io/untersander/nftabler{{ end }}
 builds:
   - id: nftabler
     main: ./main.go
@@ -27,7 +29,7 @@ snapshot:
 
 dockers_v2:
   - images:
-      - ghcr.io/untersander/nftabler
+      - "{{ .Env.REGISTRY}}"
     dockerfile: Dockerfile
     platforms:
       - linux/amd64
@@ -35,6 +37,13 @@ dockers_v2:
     tags:
       - "{{ .Version }}"
       - latest
+    labels:
+      "org.opencontainers.image.description": "A simple NFTables-based configuration tool written in Go."
+      "org.opencontainers.image.created": "{{.Date}}"
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
 
 archives:
   - formats: [tar.gz]
@@ -57,6 +66,3 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
-
-release:
-  footer: >-

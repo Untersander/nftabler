@@ -8,7 +8,9 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
@@ -36,7 +38,7 @@ func applyFile(path string) error {
 	return nil
 }
 
-func applyIfConf(path string, d fs.DirEntry) error {
+func applyIfRuleFile(path string, d fs.DirEntry) error {
 	if d.IsDir() {
 		return nil
 	}
@@ -47,13 +49,13 @@ func applyIfConf(path string, d fs.DirEntry) error {
 
 }
 
-// walkFiles loads any files that already exist when the program starts
+// Check directory and call applyIfRulefile on all files
 func walkFiles() error {
 	return filepath.WalkDir(configDir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
-		applyIfConf(path, d)
+		applyIfRuleFile(path, d)
 		return nil
 	})
 }
@@ -77,6 +79,14 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigc
+		log.Printf("shutting down")
+		cancel()
+	}()
 
 	// Event loop
 	go func() {

@@ -147,6 +147,8 @@ data:
 ## Future improvements
 - Check config files before trying to apply them.
 - More advanced configuration options (e.g. apply command, file extensions).
+- Improved debouncing of rapid file changes
+- Maybe option to only apply changed files instead of all files on any change (currently all files are applied on any new rule file change to make behavior more predictable).
 
 ## Contributing
 - Open issues / PRs in the repository for bug reports or feature requests.
