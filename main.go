@@ -40,7 +40,7 @@ func applyIfConf(path string, d fs.DirEntry) error {
 	if d.IsDir() {
 		return nil
 	}
-	if filepath.Ext(path) != ".conf" {
+	if filepath.Ext(path) != ".nft" {
 		return fmt.Errorf("checked path is not a config file: %s", path)
 	}
 	return applyFile(path)
