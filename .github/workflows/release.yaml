@@ -31,6 +31,9 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Downcase repository owner for REGISTRY
+        run: |
+          echo "REGISTRY=ghcr.io/${GITHUB_REPOSITORY@L}" >> "${GITHUB_ENV}"
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -42,4 +45,3 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REGISTRY: ghcr.io/${{ github.repository }}
