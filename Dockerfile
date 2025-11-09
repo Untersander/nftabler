@@ -1,9 +1,10 @@
-FROM golang:1.25-alpine AS builder
-WORKDIR /src
-COPY go.mod go.sum *.go ./
-RUN go build -o /nftabler .
-
 FROM alpine:3.20
+ARG TARGETOS
+ARG TARGETARCH
+
 RUN apk add --no-cache nftables
-COPY --from=builder nftabler /usr/local/bin/
+
+COPY linux/${TARGETARCH}/nftabler /usr/local/bin/nftabler
+
+RUN chmod +x /usr/local/bin/nftabler
 ENTRYPOINT ["/usr/local/bin/nftabler"]
