@@ -1,4 +1,4 @@
-module nftabler
+module github.com/Untersander/nftabler
 
 go 1.25.3
 
