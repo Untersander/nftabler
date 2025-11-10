@@ -114,6 +114,7 @@ metadata:
   namespace: nftables
 data:
   lannat.nft: |
+    add table ip lannat
     flush table ip lannat
     define lan_cidr = 10.0.0.0/20
     define wan_iface = "enp2s0f0np0"

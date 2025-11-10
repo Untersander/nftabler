@@ -32,7 +32,8 @@ func applyFile(path string) error {
 	cmd.Stdin = file
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("nft error: %w, output: %s", err, out)
+		log.Printf("nft apply error: %s, output: %s", err, out)
+		return nil
 	}
 	log.Printf("Applied %s successfully", filepath.Base(path))
 	return nil
@@ -43,7 +44,7 @@ func applyIfRuleFile(path string, d fs.DirEntry) error {
 		return nil
 	}
 	if filepath.Ext(path) != ".nft" {
-		return fmt.Errorf("checked path is not a config file: %s", path)
+		return nil
 	}
 	return applyFile(path)
 
@@ -55,8 +56,7 @@ func walkFiles() error {
 		if err != nil {
 			return err
 		}
-		applyIfRuleFile(path, d)
-		return nil
+		return applyIfRuleFile(path, d)
 	})
 }
 
