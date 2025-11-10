@@ -2,6 +2,8 @@
 
 Small wrapper around [nft](https://netfilter.org/projects/nftables/) that watches a directory of nftables config files and applies them automatically when they change.
 
+WARNING: This tool can modify host firewall state and is very experimental. Use with caution and only in trusted environments.
+
 ## Features
 - Watches a directory for changes (create/modify/remove).
 - Applies changed files with `nft -f` (or an equivalent apply command).
